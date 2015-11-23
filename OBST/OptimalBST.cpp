@@ -18,6 +18,55 @@ void OptimalBST::setFrequencies(std::vector<int> f) {
 void OptimalBST::optimizeBST() {
 	initialize();
 	sumFrequencies();
+	int i, j, r;
+	// Calculate the average time complexity for each sub-tree and for the resulting tree.
+	// i = row; j = column; numKeys = number of keys in the sub-tree.
+	// the outer loop is based on numKeys because we want to start from the inital sub-tree up to the resulting tree.
+	// We already populated the weights for all key ranges into a 2D matrix.
+	// We also already initialized the complexities for individual keys and populated those initial values
+	//     into the complexities 2D matrix, so that complexities[1][1] doesn't need to be populated, for instance.
+	//     This is why numKeys is initialized to 2 instead of 1 in the outer loop.
+
+	// Calculate roots in the same loop. Store root for each sub-tree, plus either the 2nd-most-optimal root,
+	// or the roots that have equivalent complexity to the chosen root.
+	for (int numKeys = 2; numKeys <= length; numKeys++) {
+		for (i = 0; i < length - numKeys; i++) {
+			int j = i + numKeys - 1;
+			findRoots(i, j);
+		}
+	}
+}
+
+void OptimalBST::findRoots(int i, int j) {
+	int weight = weights[i][j];
+	int c=0;
+	bool hasMatchingComplexity;
+	for (int k = i; k <= j; k++) {
+		// sum the total complexity for the kth root
+		if (k > i) {
+			//c += complexities[i][k - 1][0];
+			c += rcs[i][k - 1][0]->complexity;
+		}
+		if (k < j) {
+			//c += complexities[k + 1][j][0];
+			c += rcs[k + 1][j][0]->complexity;
+		}
+
+		// add complexities/roots in 3D vectors
+		complexities[i][j].push_back(c);
+		roots[i][j].push_back(k);
+		rc* myRC = new rc();
+		myRC->complexity = c;
+		myRC->root = k;
+		rcs[i][j].push_back(myRC);
+		c = 0;
+	}
+	// sorts the roots in ascending order, so whether there are matching optimal values or not, 
+	// it will be sorted so the 0th and 1st value will store the optimal and alternative trees
+	sort(rcs[i][j].begin(), rcs[i][j].end(),
+		[&](rc* a, rc* b) {
+		return (a->complexity < b->complexity);
+	});
 }
 
 void OptimalBST::determineLength() {
@@ -28,12 +77,21 @@ void OptimalBST::initialize() {
 	determineLength();
 	weights.resize(length);
 	complexities.resize(length);
-	//first populate the initial frequency and complexity values for row 1/column 1, row 2/column 2, etc.
+	roots.resize(length);
+	rcs.resize(length);
+	//first populate the initial frequency, complexity, and root values for row 1/column 1, row 2/column 2, etc.
 	for (int h = 0; h < length; h++) {
+		rc* myRC = new rc();
 		weights[h].resize(length);
 		weights[h][h] = freqInput[h];
 		complexities[h].resize(length);
-		complexities[h][h] = freqInput[h];
+		complexities[h][h].push_back(freqInput[h]);
+		roots[h].resize(length);
+		roots[h][h].push_back(h);
+		rcs[h].resize(length);
+		myRC->complexity = freqInput[h];
+		myRC->root = h;
+		rcs[h][h].push_back(myRC);
 	}
 }
 
