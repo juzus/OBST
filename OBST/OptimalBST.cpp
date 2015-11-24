@@ -30,7 +30,7 @@ void OptimalBST::optimizeBST() {
 	// Calculate roots in the same loop. Store root for each sub-tree, plus either the 2nd-most-optimal root,
 	// or the roots that have equivalent complexity to the chosen root.
 	for (int numKeys = 2; numKeys <= length; numKeys++) {
-		for (i = 0; i < length - numKeys; i++) {
+		for (i = 0; i <= length - numKeys; i++) {
 			int j = i + numKeys - 1;
 			findRoots(i, j);
 		}
@@ -44,19 +44,15 @@ void OptimalBST::findRoots(int i, int j) {
 	for (int k = i; k <= j; k++) {
 		// sum the total complexity for the kth root
 		if (k > i) {
-			//c += complexities[i][k - 1][0];
 			c += rcs[i][k - 1][0]->complexity;
 		}
 		if (k < j) {
-			//c += complexities[k + 1][j][0];
 			c += rcs[k + 1][j][0]->complexity;
 		}
 
 		// add complexities/roots in 3D vectors
-		complexities[i][j].push_back(c);
-		roots[i][j].push_back(k);
 		rc* myRC = new rc();
-		myRC->complexity = c;
+		myRC->complexity = (c + weight);
 		myRC->root = k;
 		rcs[i][j].push_back(myRC);
 		c = 0;
@@ -76,18 +72,12 @@ void OptimalBST::determineLength() {
 void OptimalBST::initialize() {
 	determineLength();
 	weights.resize(length);
-	complexities.resize(length);
-	roots.resize(length);
 	rcs.resize(length);
 	//first populate the initial frequency, complexity, and root values for row 1/column 1, row 2/column 2, etc.
 	for (int h = 0; h < length; h++) {
 		rc* myRC = new rc();
 		weights[h].resize(length);
 		weights[h][h] = freqInput[h];
-		complexities[h].resize(length);
-		complexities[h][h].push_back(freqInput[h]);
-		roots[h].resize(length);
-		roots[h][h].push_back(h);
 		rcs[h].resize(length);
 		myRC->complexity = freqInput[h];
 		myRC->root = h;
