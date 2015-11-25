@@ -1,7 +1,4 @@
-#include <vector>
-#include <string>
-#include <algorithm>
-
+#include <queue>
 #pragma once
 
 class OptimalBST
@@ -54,5 +51,6 @@ class OptimalBST
 	void calcStdDev();
 	void deleteTree(node* r);
 	void cleanup();
+	//void outputResults();
 };
 

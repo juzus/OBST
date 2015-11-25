@@ -1,0 +1,15 @@
+/*Original way of iterating below. Write about how you tried this and learned by doing it on paper that this wouldn't work*/
+	//for (i; i < length; i++) {
+	//	for (j=i; j < length; i++) {
+	//		int sum = 0;
+	//		// might want to take this conditional out of the loop and just set the initial frequencies separately
+	//		if (i == j) {
+	//			frequencies[i][j] = freqInput[i];
+	//		}
+	//		else {
+	//			for (int k = i; k <= j; k++) {
+	//				sum += freque
+	//			}
+	//		}
+	//	}
+	//}

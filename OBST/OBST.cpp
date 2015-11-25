@@ -1,16 +1,6 @@
 // OBST.cpp : Defines the entry point for the console application.
 //
 #include "stdafx.h"
-#include <iostream>
-#include <fstream>
-#include <streambuf>
-#include <string>
-#include <algorithm>
-#include <iterator>
-#include <sstream>
-#include <vector>
-#include <tchar.h>
-#include <Windows.h>
 #include "OptimalBST.h"
 using namespace std;
 
@@ -70,8 +60,8 @@ int main()
 				\nComputer Operating System: Windows\
 				\nDevelopment Language: C++\
 				\nProcessor: AMD or Intel 64-bit\
-				\nRAM: 8GB";
-		cout << "Enter the filename for the frequency input you would like to use.\
+				\nRAM: 8GB" << endl;
+		cout << "\nEnter the filename for the frequency input you would like to use.\
 				\nNote that the file should be located in the program directory, and only DAT files are valid.\
 				\nDO NOT INCLUDE THE EXTENSION, since we will presume it is a DAT file ==> ";
 		
