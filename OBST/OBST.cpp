@@ -29,8 +29,7 @@ int main()
 	fileContents.assign((std::istreambuf_iterator<char>(file)),
 		std::istreambuf_iterator<char>());
 	file.close();
-	cout << fileContents;
-	cout << "\nRemoving commas:\n";
+	cout << fileContents << endl;
 	// remove commas from file data string
 	fileContents.erase(std::remove(fileContents.begin(), fileContents.end(), ','), fileContents.end());
 	//count = countZeroes(fileContents);
@@ -42,7 +41,6 @@ int main()
 	while (ss >> num) {
 	freq.push_back(num);
 	}
-	cout << freq.at(2);
 	if (freq.back() == 0) {
 		freq.pop_back();
 	}

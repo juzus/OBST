@@ -1,9 +1,12 @@
 #include "stdafx.h"
 #include "OptimalBST.h"
+#include <iostream>
+#include <math.h>
+#include <queue>
 
 using namespace std;
 
-OptimalBST::OptimalBST() {}
+OptimalBST::OptimalBST() : root(NULL) {}
 
 
 OptimalBST::~OptimalBST() {
@@ -35,6 +38,17 @@ void OptimalBST::optimizeBST() {
 			findRoots(i, j);
 		}
 	}
+
+	//initialize values to determine std. deviation
+	sumWeights = weights[0][length - 1];
+	m.resize(length);
+	v.resize(length);
+	// levelOrderTraversal(0, length - 1, rcs[0][length - 1][0].root, 0);
+	rootIndex = 0;
+	root = constructTree(0, length - 1, 1);
+	calcStdDev();
+	cout << "Standard Deviation for Optimal BST 1: " << std_dev << endl; 
+	levelOrderTraversal(root);
 }
 
 void OptimalBST::findRoots(int i, int j) {
@@ -44,24 +58,24 @@ void OptimalBST::findRoots(int i, int j) {
 	for (int k = i; k <= j; k++) {
 		// sum the total complexity for the kth root
 		if (k > i) {
-			c += rcs[i][k - 1][0]->complexity;
+			c += rcs[i][k - 1][0].complexity;
 		}
 		if (k < j) {
-			c += rcs[k + 1][j][0]->complexity;
+			c += rcs[k + 1][j][0].complexity;
 		}
 
 		// add complexities/roots in 3D vectors
-		rc* myRC = new rc();
-		myRC->complexity = (c + weight);
-		myRC->root = k;
-		rcs[i][j].push_back(myRC);
+		//rc* myRC = new rc();
+		//myRC->complexity = (c + weight);
+		//myRC->root = k;
+		rcs[i][j].emplace_back(rc{ (c + weight), k });
 		c = 0;
 	}
 	// sorts the roots in ascending order, so whether there are matching optimal values or not, 
 	// it will be sorted so the 0th and 1st value will store the optimal and alternative trees
 	sort(rcs[i][j].begin(), rcs[i][j].end(),
-		[&](rc* a, rc* b) {
-		return (a->complexity < b->complexity);
+		[&](rc a, rc b) {
+		return (a.complexity < b.complexity);
 	});
 }
 
@@ -75,13 +89,13 @@ void OptimalBST::initialize() {
 	rcs.resize(length);
 	//first populate the initial frequency, complexity, and root values for row 1/column 1, row 2/column 2, etc.
 	for (int h = 0; h < length; h++) {
-		rc* myRC = new rc();
+		// rc* myRC = new rc();
 		weights[h].resize(length);
 		weights[h][h] = freqInput[h];
 		rcs[h].resize(length);
-		myRC->complexity = freqInput[h];
-		myRC->root = h;
-		rcs[h][h].push_back(myRC);
+		// myRC->complexity = freqInput[h];
+		// myRC->root = h;
+		rcs[h][h].emplace_back(rc{ freqInput[h], h });
 	}
 }
 
@@ -118,4 +132,87 @@ void OptimalBST::sumFrequencies() {
 	//		}
 	//	}
 	//}
+}
+
+OptimalBST::node* OptimalBST::constructTree(int begin, int end, int level) {
+	node* n;
+	if (level == 4) {
+		return NULL;
+	}
+	else {
+		int r = rcs[begin][end][rootIndex].root;
+		n = new node();
+		n->key = r;
+		n->level = level;
+		rcs[r][r][rootIndex].level = level;
+		if (begin == end) {
+			return n;
+		}
+		else {
+			n->left = constructTree(begin, r - 1, level + 1);
+			n->right = constructTree(r + 1, end, level + 1);
+		}
+	}
+	return n;
+}
+
+void OptimalBST::levelOrderTraversal(node* root) {
+	//if (level == 4) {
+	//	//int pr = weights[begin][end] / sumWeights;
+	//	//mean[r] = (pr * level);
+	//	//variance[r] = (level * level) * pr;
+	//	return;
+	//}
+
+	//cout << "level: " << level << ", " << r;
+	//if (begin == end){
+	//	return;
+	//}
+	//else {
+	//	if ( nodeCount == pow(2,level) ) {
+	//		level++; //increment level when the nodes for current level have reached 2^n i.e. the max # of nodes for that level
+	//	}
+	//	levelOrderTraversal(begin, r - 1, rcs[begin][r-1][0].root, level);
+	//	levelOrderTraversal(r + 1, end, rcs[r + 1][end][0].root, level);
+	//}
+	// BFS tree traversal using a queue treeQ, r for the root/key value to be pushed to the queue for output,
+	// and begin/end values to keep track of subtrees, and level to keep track of the tree's level and stop at level 3
+	queue<node*> treeQ;
+	if (root) {
+		treeQ.push(root);
+	}
+	int l = root->level;
+	while (!treeQ.empty()) {
+		const node* const temp = treeQ.front();
+		treeQ.pop();
+		cout << "level: " << temp->level << ", value: " << temp->key << endl;
+		// keep track of what level we're on in the traversal. increment level when nodeCount 
+		// is equal to the max number of nodes allowed in the level of the BST, i.e. 2^n
+		
+		if (temp->left) {
+			treeQ.push(temp->left);
+		}
+		if (temp->right) {
+			treeQ.push(temp->right);
+		}
+	}
+}
+
+void OptimalBST::calcStdDev() {
+	mean = 0;
+	variance = 0;
+	std_dev = 0;
+	for (int i = 0; i < length; i++) {
+		rc k = rcs[i][i][rootIndex];
+		float lvl = k.level;
+		float wgt = k.complexity;
+		float pr = wgt / sumWeights;
+		m.push_back(lvl*pr);
+		v.push_back((lvl*lvl) * pr);
+
+		mean += (lvl * pr);
+		variance += ( (lvl * lvl) * pr );
+	}
+	float difference = variance - (mean * mean);
+	std_dev = sqrt(difference);
 }
