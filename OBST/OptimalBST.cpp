@@ -20,6 +20,7 @@ void OptimalBST::setFrequencies(std::vector<int> f) {
 // Algorithm O(n^3), meaning that we will iterate through key ranges and determine weights/complexity/roots at each unique range
 void OptimalBST::optimizeBST() {
 	initialize();
+	cout << "\nNumber of keys in tree: " << length << endl;
 	sumFrequencies();
 	int i, j, r;
 	// Calculate the average time complexity for each sub-tree and for the resulting tree.
@@ -246,4 +247,18 @@ void OptimalBST::calcStdDev() {
 	}
 	float difference = variance - (mean * mean);
 	std_dev = sqrt(difference);
+}
+
+void OptimalBST::cleanup() {
+	rcs.clear();
+	weights.clear();
+	freqInput.clear();
+	m.clear();
+	v.clear();
+	mean = 0;
+	variance = 0;
+	std_dev = 0;
+	length = 0;
+	sumWeights = 0;
+	rootIndex = 0;
 }
