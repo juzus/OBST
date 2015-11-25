@@ -43,12 +43,31 @@ void OptimalBST::optimizeBST() {
 	sumWeights = weights[0][length - 1];
 	m.resize(length);
 	v.resize(length);
-	// levelOrderTraversal(0, length - 1, rcs[0][length - 1][0].root, 0);
 	rootIndex = 0;
+
+	// Construct optimal BST
 	root = constructTree(0, length - 1, 1);
+	// Get optimal BST's standard deviation
 	calcStdDev();
-	cout << "Standard Deviation for Optimal BST 1: " << std_dev << endl; 
+	cout << "Standard Deviation for Optimal BST: " << std_dev << endl; 
+	// output breadth-first traversal for first 3 levels of tree
 	levelOrderTraversal(root);
+	// clear tree before constructing second tree
+	deleteTree(root);
+	// second tree's root is indicated
+	rootIndex = 1;	
+	// do all of the same as above for the second tree
+	root = constructTree(0, length - 1, 1);
+	cout << "\n";
+	calcStdDev();
+	if (rcs[0][length-1][0].complexity == rcs[0][length-1][1].complexity) {
+		cout << "Standard Deviation for Alternate Optimal BST With Equal Complexity: " << std_dev << endl;
+	}
+	else {
+		cout << "Standard Deviation for Second Most Optimal BST: " << std_dev << endl;
+	}
+	levelOrderTraversal(root);
+	deleteTree(root);
 }
 
 void OptimalBST::findRoots(int i, int j) {
@@ -95,6 +114,7 @@ void OptimalBST::initialize() {
 		rcs[h].resize(length);
 		// myRC->complexity = freqInput[h];
 		// myRC->root = h;
+		rcs[h][h].emplace_back(rc{ freqInput[h], h });
 		rcs[h][h].emplace_back(rc{ freqInput[h], h });
 	}
 }
@@ -144,7 +164,10 @@ OptimalBST::node* OptimalBST::constructTree(int begin, int end, int level) {
 		n = new node();
 		n->key = r;
 		n->level = level;
+		
+		// a hacky way to keep track of the level of the leaves in a constructed tree.
 		rcs[r][r][rootIndex].level = level;
+		
 		if (begin == end) {
 			return n;
 		}
@@ -154,6 +177,14 @@ OptimalBST::node* OptimalBST::constructTree(int begin, int end, int level) {
 		}
 	}
 	return n;
+}
+
+void OptimalBST::deleteTree(node* r) {
+	if (r != NULL) {
+		deleteTree(r->left);
+		deleteTree(r->right);
+	}
+	delete r;
 }
 
 void OptimalBST::levelOrderTraversal(node* root) {

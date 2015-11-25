@@ -54,5 +54,6 @@ class OptimalBST
 	node* constructTree(int begin, int end, int level);
 	void levelOrderTraversal(node* root);
 	void calcStdDev();
+	void deleteTree(node* r);
 };
 
