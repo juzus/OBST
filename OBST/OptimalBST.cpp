@@ -50,7 +50,9 @@ void OptimalBST::optimizeBST() {
 	root = constructTree(0, length - 1, 1);
 	// Get optimal BST's standard deviation
 	calcStdDev();
-	cout << "Standard Deviation for Optimal BST: " << std_dev << endl; 
+	cout << "\nFor a Find Operation on the Optimal BST:\
+			\nStandard Deviation = " << std_dev << 
+		    "\nBest and Worst Case: O(" << length << "^3)";
 	// output breadth-first traversal for first 3 levels of tree
 	levelOrderTraversal(root);
 	// clear tree before constructing second tree
@@ -62,11 +64,14 @@ void OptimalBST::optimizeBST() {
 	cout << "\n";
 	calcStdDev();
 	if (rcs[0][length-1][0].complexity == rcs[0][length-1][1].complexity) {
-		cout << "Standard Deviation for Alternate Optimal BST With Equal Complexity: " << std_dev << endl;
+		cout << "For a Find Operation on the Alternative Optimal BST With Equal Complexity:\
+				\nStandard Deviation = " << std_dev << endl;
 	}
 	else {
-		cout << "Standard Deviation for Second Most Optimal BST: " << std_dev << endl;
+		cout << "For a Find Operation on the Second Most Optimal BST:\
+				\nStandard Deviation: " << std_dev << endl;
 	}
+	cout << "Best and Worst Case = " << "O(" << length << "^3)" << endl;
 	levelOrderTraversal(root);
 	deleteTree(root);
 }
@@ -209,6 +214,7 @@ void OptimalBST::levelOrderTraversal(node* root) {
 	//}
 	// BFS tree traversal using a queue treeQ, r for the root/key value to be pushed to the queue for output,
 	// and begin/end values to keep track of subtrees, and level to keep track of the tree's level and stop at level 3
+	cout << "\nLevel Order Traversal:\n";
 	queue<node*> treeQ;
 	if (root) {
 		treeQ.push(root);
