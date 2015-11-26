@@ -1,3 +1,24 @@
+/*
+Class : OptimalBST
+
+Julia Allen
+CS404 Fall Semester 2015
+
+This is a custom class used to find an optimal binary search tree
+based on provided frequency input.
+
+It determines the minimal average time complexity for the tree, and
+finds the alternative second most optimal tree as well. Alternatively,
+if there are matching minimal average time complexities for more than one
+potential root, two optimal binary search tree options are determined.
+
+This class also constructs the two trees up to 3 levels, then
+prints out the level order traversal of the tree.
+
+This class also determines and outputs the average, best case, and worst case 
+time complexities for find operations on the tree, and the standard deviation for the same.
+*/
+
 #include "stdafx.h"
 #include "OptimalBST.h"
 
@@ -37,6 +58,9 @@ void OptimalBST::optimizeBST() {
 		}
 	}
 
+	// Optimal BST's root index for the 3D vector is indicated
+	rootIndex = 0;
+
 	// Construct optimal BST
 	root = constructTree(0, length - 1, 1);
 
@@ -46,9 +70,9 @@ void OptimalBST::optimizeBST() {
 	//outputResults();
 	cout << "\n>>> For a Find Operation on the Optimal BST:" << endl <<
 			"\nStandard Deviation = " << std_dev <<
-		"\nAverage Case Time Complexity: O(" << mean << ")" <<
+		"\nAverage Case Time Complexity: O(" << rcs[0][length-1][0].complexity << ")" <<
 		"\nBest Case: O(1)" << 
-		"\nWorst Case: " << "O(" << variance << ")" << endl;
+		"\nWorst Case: " << "O(" << sumWeights * length << ")" << endl;
 	
 	// output breadth-first traversal for first 3 levels of tree
 	levelOrderTraversal(root);
@@ -72,9 +96,9 @@ void OptimalBST::optimizeBST() {
 		cout << "\n>>> For a Find Operation on the Second Most Optimal BST:" << endl <<
 				"\nStandard Deviation: " << std_dev;
 	}
-	cout << "\nAverage Case Time Complexity = O(" << mean << ")" <<
+	cout << "\nAverage Case Time Complexity = O(" << rcs[0][length-1][1].complexity << ")" <<
 			"\nBest Case = " << "O(" << 1 << ")" <<
-			"\nWorst Case = " << "O(" << variance << ")" << endl;
+			"\nWorst Case = " << "O(" << sumWeights * length << ")" << endl;
 	levelOrderTraversal(root);
 	deleteTree(root);
 }
@@ -158,6 +182,9 @@ OptimalBST::node* OptimalBST::constructTree(int begin, int end, int level) {
 	if (level == 4) {
 		return NULL;
 	}
+	else if (end < begin) {
+		return NULL;
+	}
 	else if ((end - begin) == (length -1)) {
 			r = rcs[begin][end][rootIndex].root;
 	}
@@ -224,7 +251,6 @@ void OptimalBST::calcStdDev() {
 	sumWeights = weights[0][length - 1];
 	m.resize(length);
 	v.resize(length);
-	rootIndex = 0;
 	mean = 0;
 	variance = 0;
 	std_dev = 0;

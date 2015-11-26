@@ -1,5 +1,17 @@
-// OBST.cpp : Defines the entry point for the console application.
-//
+/*
+Main Program: OBST
+
+Julia Allen
+CS404 Fall Semester 2015
+
+This program reads in a file containing frequencies
+with their keys implied in the ordering.
+
+It uses an instance of the OptimalBST class to report the optimal
+and second most optimal trees, or alternatively two optimal trees
+with equal average time complexity.
+*/
+
 #include "stdafx.h"
 #include "OptimalBST.h"
 using namespace std;
@@ -47,9 +59,15 @@ void timerOutput() {
 	cout << "Time elapsed for the optimize, tree construction and traversal algorithms: " << elapsedTime << "ms" << endl;
 }
 
+void cleanup() {
+	elapsedTime = 0;
+	fileName = "";
+	fileContents = "";
+	freq.clear();
+}
+
 int main()
 {
-	int count = 0;
 	OptimalBST obst;
 	bool in = false;
 	bool cont = true;
@@ -100,6 +118,7 @@ int main()
 			if (answer == "y" || answer == "Y") {
 				in = true;
 				obst.cleanup();
+				cleanup();
 			}
 			else if (answer == "n" || answer == "N") {
 				in = true;
