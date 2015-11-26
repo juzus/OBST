@@ -44,9 +44,11 @@ void OptimalBST::optimizeBST() {
 	calcStdDev();
 	
 	//outputResults();
-	cout << "\n>>> For a Find Operation on the Optimal BST:\
-			\nStandard Deviation = " << std_dev << 
-		    "\nBest and Worst Case: O(" << length << "^3)" << endl;
+	cout << "\n>>> For a Find Operation on the Optimal BST:" << endl <<
+			"\nStandard Deviation = " << std_dev <<
+		"\nAverage Case Time Complexity: O(" << mean << ")" <<
+		"\nBest Case: O(1)" << 
+		"\nWorst Case: " << "O(" << variance << ")" << endl;
 	
 	// output breadth-first traversal for first 3 levels of tree
 	levelOrderTraversal(root);
@@ -63,14 +65,16 @@ void OptimalBST::optimizeBST() {
 	calcStdDev();
 	
 	if (rcs[0][length-1][0].complexity == rcs[0][length-1][1].complexity) {
-		cout << "\n>>> For a Find Operation on the Alternative Optimal BST With Equal Complexity:\
-				\nStandard Deviation = " << std_dev << endl;
+		cout << "\n>>> For a Find Operation on the Alternative Optimal BST With Equal Complexity" << endl <<
+				"\nStandard Deviation = " << std_dev;
 	}
 	else {
-		cout << "\n>>> For a Find Operation on the Second Most Optimal BST:\
-				\nStandard Deviation: " << std_dev << endl;
+		cout << "\n>>> For a Find Operation on the Second Most Optimal BST:" << endl <<
+				"\nStandard Deviation: " << std_dev;
 	}
-	cout << "Best and Worst Case = " << "O(" << length << "^3)" << endl;
+	cout << "\nAverage Case Time Complexity = O(" << mean << ")" <<
+			"\nBest Case = " << "O(" << 1 << ")" <<
+			"\nWorst Case = " << "O(" << variance << ")" << endl;
 	levelOrderTraversal(root);
 	deleteTree(root);
 }
@@ -78,7 +82,6 @@ void OptimalBST::optimizeBST() {
 void OptimalBST::findRoots(int i, int j) {
 	int weight = weights[i][j];
 	int c=0; // temp storage for complexity values
-	bool hasMatchingComplexity;
 
 	for (int k = i; k <= j; k++) {
 
@@ -150,27 +153,31 @@ OptimalBST::node* OptimalBST::constructTree(int begin, int end, int level) {
 	// standard linked-list-style binary search tree that I implemented with
 	// a struct called node
 	node* n;
-
+	int r;
 	// Tree only needs to be constructed to the 3rd level
 	if (level == 4) {
 		return NULL;
 	}
+	else if ((end - begin) == (length -1)) {
+			r = rcs[begin][end][rootIndex].root;
+	}
 	else {
-		int r = rcs[begin][end][rootIndex].root;
-		n = new node();
-		n->key = r;
-		n->level = level;
+		r = rcs[begin][end][0].root;
+	}
+
+	n = new node();
+	n->key = r;
+	n->level = level;
 		
-		// a way to keep track of the level of the leaves in a constructed tree.
-		rcs[r][r][rootIndex].level = level;
+	// a way to keep track of the level of the leaves in a constructed tree.
+	rcs[r][r][rootIndex].level = level;
 		
-		if (begin == end) {
-			return n;
-		}
-		else {
-			n->left = constructTree(begin, r - 1, level + 1);
-			n->right = constructTree(r + 1, end, level + 1);
-		}
+	if (begin == end) {
+		return n;
+	}
+	else {
+		n->left = constructTree(begin, r - 1, level + 1);
+		n->right = constructTree(r + 1, end, level + 1);
 	}
 	return n;
 }
@@ -186,24 +193,6 @@ void OptimalBST::deleteTree(node* r) {
 }
 
 void OptimalBST::levelOrderTraversal(node* root) {
-	//if (level == 4) {
-	//	//int pr = weights[begin][end] / sumWeights;
-	//	//mean[r] = (pr * level);
-	//	//variance[r] = (level * level) * pr;
-	//	return;
-	//}
-
-	//cout << "level: " << level << ", " << r;
-	//if (begin == end){
-	//	return;
-	//}
-	//else {
-	//	if ( nodeCount == pow(2,level) ) {
-	//		level++; //increment level when the nodes for current level have reached 2^n i.e. the max # of nodes for that level
-	//	}
-	//	levelOrderTraversal(begin, r - 1, rcs[begin][r-1][0].root, level);
-	//	levelOrderTraversal(r + 1, end, rcs[r + 1][end][0].root, level);
-	//}
 	// BFS tree traversal using a queue treeQ, r for the root/key value to be pushed to the queue for output,
 	// and begin/end values to keep track of subtrees, and level to keep track of the tree's level and stop at level 3
 	
@@ -242,6 +231,7 @@ void OptimalBST::calcStdDev() {
 
 	// Each leaf node's auxiliary values are stored in the m vector for the mean
 	// or the v vector for the variance.
+
 	for (int i = 0; i < length; i++) {
 		rc k = rcs[i][i][rootIndex];
 		float lvl = k.level;
