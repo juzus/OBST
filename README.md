@@ -1,9 +1,6 @@
 # OBST
-Optimal Binary Search Tree Project for CS404
-
-========================================================================
-    CONSOLE APPLICATION : OBST Project Overview
-========================================================================
+    
+## CONSOLE APPLICATION : OBST Project Overview
 
 This program runs best with a 64-bit processor as opposed to 32-bit. 
 Sometimes the program will crash when the number of inputs is large
