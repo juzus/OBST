@@ -16,11 +16,8 @@ This is the main application source file.
 OptimalBST.cpp
 This is the optimal BST tree class used in the main application.
 
-/////////////////////////////////////////////////////////////////////////////
 Other standard files:
 
 StdAfx.h, StdAfx.cpp
     These files are used to build a precompiled header (PCH) file
     named OBST.pch and a precompiled types file named StdAfx.obj.
-
-/////////////////////////////////////////////////////////////////////////////
